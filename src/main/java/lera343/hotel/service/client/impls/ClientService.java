@@ -1,43 +1,62 @@
 package lera343.hotel.service.client.impls;
 
+import lera343.hotel.dto.ClientRequest;
+import lera343.hotel.dto.ClientResponse;
 import lera343.hotel.entity.Client;
 import lera343.hotel.repository.ClientRepository;
 import lera343.hotel.service.client.interfaces.IClientService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
+@Service
 public class ClientService implements IClientService {
-    @Autowired
-    private ClientRepository clientRepository;
+    private final ClientRepository clientRepository;
     @Override
-    public List<Client> getAll() {
-        return clientRepository.findAll();
+    public List<ClientResponse> getAll() {
+        var clients = clientRepository.findAll();
+        return clients.stream().map(ClientResponse::mapToClientResponse).collect(Collectors.toList());
     }
 
     @Override
-    public Client getById(Long id) {
+    public ClientResponse getById(Long id) {
         Optional<Client> result = clientRepository.findById(id);
         if (result.isPresent()) {
-            return result.get();
+            return ClientResponse.mapToClientResponse(result.get());
         } else {
             return null;
         }
     }
 
     @Override
-    public Client create(Client client) {
-        return clientRepository.save(client);
+    public ClientResponse create(ClientRequest client) {
+        var newClient = Client.builder()
+                .id(new Random().nextLong())
+                .name(client.getName())
+                .surname(client.getSurname())
+                .patronic(client.getPatronic())
+                .number(client.getNumber())
+                .email(client.getEmail())
+                .description(client.getDescription())
+                .bookings(new HashSet<>())
+                .build();
+        return ClientResponse.mapToClientResponse(clientRepository.save(newClient));
     }
 
     @Override
-    public Client update(Long id, Client client) {
-        return clientRepository.save(client);
+    public ClientResponse update(Long id, Client client) {
+        return ClientResponse.mapToClientResponse(clientRepository.save(client));
     }
 
     @Override
     public void delete(Long id) {
         clientRepository.deleteById(id);
     }
+
 }

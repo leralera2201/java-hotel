@@ -2,14 +2,16 @@ package lera343.hotel.controller;
 
 import lera343.hotel.entity.Personnel;
 import lera343.hotel.service.personnel.impls.PersonnelService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/personnels")
 public class PersonnelController {
-    PersonnelService personnelService;
+    private final PersonnelService personnelService;
     @GetMapping
     public List<Personnel> getAll(@RequestParam(required = false, defaultValue = "1") Integer page,
                                   @RequestParam(required = false, defaultValue = "10") Integer size){
@@ -31,7 +33,7 @@ public class PersonnelController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(Long id){
+    public void delete(@PathVariable Long id){
         personnelService.delete(id);
     }
 }

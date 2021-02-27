@@ -3,14 +3,16 @@ package lera343.hotel.service.personnel.impls;
 import lera343.hotel.entity.Personnel;
 import lera343.hotel.repository.PersonnelRepository;
 import lera343.hotel.service.personnel.interfaces.IPersonnelService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
+@Service
 public class PersonnelService implements IPersonnelService {
-    @Autowired
-    private PersonnelRepository personnelRepository;
+    private final PersonnelRepository personnelRepository;
     @Override
     public List<Personnel> getAll() {
         return personnelRepository.findAll();

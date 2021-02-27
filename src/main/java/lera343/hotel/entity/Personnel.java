@@ -10,7 +10,7 @@ import java.util.Date;
 @Entity
 public class Personnel {
     @Id
-    private String id;
+    private Long id;
     private String name;
     private String surname;
     private String patronic;

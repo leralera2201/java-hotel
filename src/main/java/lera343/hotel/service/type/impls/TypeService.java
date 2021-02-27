@@ -1,39 +1,55 @@
 package lera343.hotel.service.type.impls;
 
+import lera343.hotel.dto.TypeRequest;
+import lera343.hotel.dto.TypeResponse;
+import lera343.hotel.entity.Room;
 import lera343.hotel.entity.Type;
 import lera343.hotel.repository.TypeRepository;
 import lera343.hotel.service.type.interfaces.ITypeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
+@Service
 public class TypeService implements ITypeService {
-    @Autowired
-    private TypeRepository typeRepository;
+    private final TypeRepository typeRepository;
     @Override
-    public List<Type> getAll() {
-        return typeRepository.findAll();
+    public List<TypeResponse> getAll() {
+        var types = typeRepository.findAll();
+        return types.stream().map(TypeResponse::mapToTypeResponse).collect(Collectors.toList());
     }
 
     @Override
-    public Type getById(Long id) {
+    public TypeResponse getById(Long id) {
         Optional<Type> result = typeRepository.findById(id);
         if (result.isPresent()) {
-            return result.get();
+            return TypeResponse.mapToTypeResponse(result.get());
         } else {
             return null;
         }
     }
 
     @Override
-    public Type create(Type type) {
-        return typeRepository.save(type);
+    public TypeResponse create(TypeRequest type) {
+        var newType = Type.builder()
+                .id(new Random().nextLong())
+                .description(type.getDescription())
+                .name(type.getName())
+                .rooms(new HashSet<>())
+                .build();
+
+        return TypeResponse.mapToTypeResponse(typeRepository.save(newType));
     }
 
     @Override
-    public Type update(Long id, Type type) {
-        return typeRepository.save(type);
+    public TypeResponse update(Long id, Type type) {
+        return TypeResponse.mapToTypeResponse(typeRepository.save(type));
     }
 
     @Override

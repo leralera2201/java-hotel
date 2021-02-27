@@ -1,23 +1,27 @@
 package lera343.hotel.entity;
 
-import lombok.Data;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.Set;
+
+import static javax.persistence.FetchType.EAGER;
 
 @Data
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Client {
     @Id
-    private String id;
+    private Long id;
     private String name;
     private String surname;
     private String patronic;
     private String number;
     private String email;
     private String description;
-    @OneToMany(mappedBy = "client")
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "client", fetch = EAGER, cascade = CascadeType.ALL)
     private Set<Booking> bookings;
 }

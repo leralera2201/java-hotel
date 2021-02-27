@@ -1,13 +1,18 @@
 package lera343.hotel.entity;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Set;
 
+import static javax.persistence.FetchType.EAGER;
+
 @Data
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Room {
     @Id
     private Long id;
@@ -18,6 +23,7 @@ public class Room {
     @ManyToOne
     @JoinColumn(name = "type_id")
     private Type type;
-    @OneToMany(mappedBy = "room")
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "room", fetch = EAGER, cascade = CascadeType.ALL)
     private Set<Booking> bookings;
 }
