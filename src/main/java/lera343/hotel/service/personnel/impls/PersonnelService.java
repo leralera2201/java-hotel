@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -20,12 +19,7 @@ public class PersonnelService implements IPersonnelService {
 
     @Override
     public Personnel getById(Long id) {
-        Optional<Personnel> result = personnelRepository.findById(id);
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            return null;
-        }
+        return personnelRepository.findById(id).orElseThrow();
     }
 
     @Override

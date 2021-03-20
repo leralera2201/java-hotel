@@ -40,7 +40,7 @@ public class BookingService implements IBookingService {
         if (result.isPresent()) {
             return BookingResponse.mapToBookingResponse(result.get());
         } else {
-            return null;
+            return BookingResponse.mapToBookingResponse(result.orElseThrow());
         }
     }
 

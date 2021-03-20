@@ -4,6 +4,7 @@ import lera343.hotel.dto.RoomRequest;
 import lera343.hotel.dto.RoomResponse;
 import lera343.hotel.dto.TypeResponse;
 import lera343.hotel.entity.Room;
+import lera343.hotel.mapper.RoomMapper;
 import lera343.hotel.repository.RoomRepository;
 import lera343.hotel.service.room.interfaces.IRoomService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @Service
 public class RoomService implements IRoomService {
     private final RoomRepository roomRepository;
+    private final RoomMapper roomMapper;
     @Override
     public List<RoomResponse> getAll() {
         var rooms = roomRepository.findAll();
@@ -37,21 +39,13 @@ public class RoomService implements IRoomService {
         if (result.isPresent()) {
             return RoomResponse.mapToRoomResponse(result.get());
         } else {
-            return null;
+            return RoomResponse.mapToRoomResponse(result.orElseThrow());
         }
     }
 
     @Override
     public RoomResponse create(RoomRequest room) {
-        var newRoom = Room.builder()
-                .id(new Random().nextLong())
-                .name(room.getName())
-                .description(room.getDescription())
-                .placesCount(room.getPlacesCount())
-                .price(room.getPrice())
-                .type(room.getType())
-                .bookings(new HashSet<>())
-                .build();
+        var newRoom = roomMapper.fromRequest(room);
         return RoomResponse.mapToRoomResponse(roomRepository.save(newRoom));
     }
 

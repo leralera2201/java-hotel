@@ -20,7 +20,7 @@ public class Room {
     private String description;
     private Integer placesCount;
     private BigDecimal price;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "type_id")
     private Type type;
     @EqualsAndHashCode.Exclude
