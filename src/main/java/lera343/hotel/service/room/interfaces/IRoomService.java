@@ -11,6 +11,6 @@ public interface IRoomService {
     List<RoomResponse> getRoomsByTypeId(Long id);
     RoomResponse getById(Long id);
     RoomResponse create(RoomRequest room);
-    RoomResponse update(Long id, Room room);
+    RoomResponse update(Long id, RoomRequest room);
     void delete(Long id);
 }

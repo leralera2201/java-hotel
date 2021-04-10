@@ -87,7 +87,7 @@ class TypeServiceTest {
         var captor = ArgumentCaptor.forClass(Type.class);
         var type = TypeStub.getRandomType();
         when(typeRepository.save(Mockito.any())).thenReturn(TypeStub.getRandomType());
-        var result = service.update(TypeStub.ID, TypeStub.getRandomType());
+        var result = service.update(TypeStub.ID, TypeStub.getTypeRequest());
         Mockito.verify(typeRepository, atLeast(1)).save(captor.capture());
         assertEquals(type, captor.getValue());
         assertEquals(type.getName(), result.getName());

@@ -35,12 +35,9 @@ public class RoomService implements IRoomService {
 
     @Override
     public RoomResponse getById(Long id) {
-        Optional<Room> result = roomRepository.findById(id);
-        if (result.isPresent()) {
-            return RoomResponse.mapToRoomResponse(result.get());
-        } else {
-            return RoomResponse.mapToRoomResponse(result.orElseThrow());
-        }
+        var room = roomRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No Category with this ID: " + id));
+        return RoomResponse.mapToRoomResponse(room);
     }
 
     @Override
@@ -50,7 +47,14 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    public RoomResponse update(Long id, Room room) {
+    public RoomResponse update(Long id, RoomRequest request) {
+        var room = roomRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No Category with this ID: " + id));
+        room.setDescription(request.getDescription());
+        room.setName(request.getName());
+        room.setPrice(request.getPrice());
+        room.setPlacesCount(request.getPlacesCount());
+        room.setType(request.getType());
         return RoomResponse.mapToRoomResponse(roomRepository.save(room));
     }
 

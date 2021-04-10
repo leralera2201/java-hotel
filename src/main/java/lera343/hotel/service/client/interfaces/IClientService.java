@@ -10,6 +10,6 @@ public interface IClientService {
     List<ClientResponse> getAll();
     ClientResponse getById(Long id);
     ClientResponse create(ClientRequest client);
-    ClientResponse update(Long id, Client client);
+    ClientResponse update(Long id, ClientRequest client);
     void delete(Long id);
 }

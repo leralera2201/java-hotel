@@ -5,60 +5,73 @@ import lera343.hotel.dto.BookingResponse;
 import lera343.hotel.entity.Booking;
 import lera343.hotel.service.booking.impls.BookingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/bookings")
+@RequestMapping(value = "/bookings", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 public class BookingController {
 
     private final BookingService bookingService;
-    @GetMapping
-    public List<BookingResponse> getAll(@RequestParam(required = false, defaultValue = "1") Integer page,
-                                @RequestParam(required = false, defaultValue = "10") Integer size){
-        return bookingService.getAll();
-    }
-    @GetMapping("/{id}")
-    public BookingResponse getById(@PathVariable Long id){
-        return bookingService.getById(id);
-    }
 
     @PostMapping
-    public BookingResponse create(@RequestBody Booking booking){
-        return bookingService.create(booking);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<BookingResponse> create(@RequestBody Booking request) {
+        return ResponseEntity.ok(bookingService.create(request));
     }
 
-    @PutMapping("/{id}")
-    public BookingResponse update(@ApiParam(
-            name="bookingId",
-            example="1"
-    ) @PathVariable Long id, @RequestBody Booking booking){
-        return bookingService.update(id, booking);
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN, USER')")
+    public ResponseEntity<List<BookingResponse>> getAll(@RequestParam(required = false, defaultValue = "1") Integer page,
+                                                     @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return ResponseEntity.ok(bookingService.getAll());
     }
 
-    @DeleteMapping("/{id}")
-    public void delete(@ApiParam(
-            name="bookingId",
-            example="1"
-    ) @PathVariable Long id){
-        bookingService.delete(id);
-    }
-
-    @GetMapping("/{clientId}/bookings")
-    public List<BookingResponse> getBookingsByClient(@ApiParam(
+    @GetMapping("/client/{clientId}")
+    @PreAuthorize("hasAnyRole('ADMIN, USER')")
+    public ResponseEntity<List<BookingResponse>> getBookingsByClient(@ApiParam(
             name="clientId",
             example="1"
     ) @PathVariable Long clientId){
-        return bookingService.getBookingsByClientId(clientId);
+        return ResponseEntity.ok(bookingService.getBookingsByClientId(clientId));
     }
 
-    @GetMapping("/{roomId}/bookings")
-    public List<BookingResponse> getBookingsByRoom(@ApiParam(
+    @GetMapping("/room/{roomId}")
+    @PreAuthorize("hasAnyRole('ADMIN, USER')")
+    public ResponseEntity<List<BookingResponse>> getBookingsByRoom(@ApiParam(
             name="roomId",
             example="1"
     ) @PathVariable Long roomId){
-        return bookingService.getBookingsByRoomId(roomId);
+        return ResponseEntity.ok(bookingService.getBookingsByRoomId(roomId));
     }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<BookingResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(bookingService.getById(id));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}")
+    public ResponseEntity<BookingResponse> update(@PathVariable Long id, @RequestBody Booking booking){
+        return ResponseEntity.ok(bookingService.update(id, booking));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        bookingService.delete(id);
+        return ResponseEntity.ok("Successfully deleted");
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> exceptionHandling() {
+        return ResponseEntity.badRequest().build();
+    }
+
 }

@@ -10,6 +10,6 @@ public interface ITypeService {
     List<TypeResponse> getAll();
     TypeResponse getById(Long id);
     TypeResponse create(TypeRequest type);
-    TypeResponse update(Long id, Type type);
+    TypeResponse update(Long id, TypeRequest type);
     void delete(Long id);
 }

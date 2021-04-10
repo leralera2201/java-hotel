@@ -36,12 +36,9 @@ public class BookingService implements IBookingService {
 
     @Override
     public BookingResponse getById(Long id) {
-        Optional<Booking> result = bookingRepository.findById(id);
-        if (result.isPresent()) {
-            return BookingResponse.mapToBookingResponse(result.get());
-        } else {
-            return BookingResponse.mapToBookingResponse(result.orElseThrow());
-        }
+        var booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No Category with this ID: " + id));
+        return BookingResponse.mapToBookingResponse(booking);
     }
 
     @Override
@@ -51,7 +48,9 @@ public class BookingService implements IBookingService {
 
     @Override
     public BookingResponse update(Long id, Booking booking) {
-        return BookingResponse.mapToBookingResponse(bookingRepository.save(booking));
+        var bookingToUpdate = bookingRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No Category with this ID: " + id));
+        return BookingResponse.mapToBookingResponse(bookingRepository.save(bookingToUpdate));
     }
 
     @Override

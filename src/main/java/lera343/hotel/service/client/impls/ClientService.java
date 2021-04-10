@@ -2,6 +2,7 @@ package lera343.hotel.service.client.impls;
 
 import lera343.hotel.dto.ClientRequest;
 import lera343.hotel.dto.ClientResponse;
+import lera343.hotel.dto.RoomResponse;
 import lera343.hotel.entity.Client;
 import lera343.hotel.mapper.ClientMapper;
 import lera343.hotel.repository.ClientRepository;
@@ -26,12 +27,9 @@ public class ClientService implements IClientService {
 
     @Override
     public ClientResponse getById(Long id) {
-        Optional<Client> result = clientRepository.findById(id);
-        if (result.isPresent()) {
-            return ClientResponse.mapToClientResponse(result.get());
-        } else {
-            return ClientResponse.mapToClientResponse(result.orElseThrow());
-        }
+        var client = clientRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No Category with this ID: " + id));
+        return ClientResponse.mapToClientResponse(client);
     }
 
     @Override
@@ -41,7 +39,15 @@ public class ClientService implements IClientService {
     }
 
     @Override
-    public ClientResponse update(Long id, Client client) {
+    public ClientResponse update(Long id, ClientRequest request) {
+        var client = clientRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No Category with this ID: " + id));
+        client.setDescription(request.getDescription());
+        client.setName(request.getName());
+        client.setEmail(request.getEmail());
+        client.setNumber(request.getNumber());
+        client.setPatronic(request.getPatronic());
+        client.setSurname(request.getSurname());
         return ClientResponse.mapToClientResponse(clientRepository.save(client));
     }
 

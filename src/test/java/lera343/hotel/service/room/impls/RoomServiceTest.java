@@ -100,7 +100,7 @@ class RoomServiceTest {
         var captor = ArgumentCaptor.forClass(Room.class);
         var room = RoomStub.getRandomRoom();
         when(roomRepository.save(Mockito.any())).thenReturn(RoomStub.getRandomRoom());
-        var result = service.update(RoomStub.ID, RoomStub.getRandomRoom());
+        var result = service.update(RoomStub.ID, RoomStub.getRoomRequest());
         Mockito.verify(roomRepository, atLeast(1)).save(captor.capture());
         assertEquals(room, captor.getValue());
         assertEquals(room.getName(), result.getName());

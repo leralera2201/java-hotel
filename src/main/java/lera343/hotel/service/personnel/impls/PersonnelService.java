@@ -1,5 +1,6 @@
 package lera343.hotel.service.personnel.impls;
 
+import lera343.hotel.dto.RoomResponse;
 import lera343.hotel.entity.Personnel;
 import lera343.hotel.repository.PersonnelRepository;
 import lera343.hotel.service.personnel.interfaces.IPersonnelService;
@@ -19,7 +20,8 @@ public class PersonnelService implements IPersonnelService {
 
     @Override
     public Personnel getById(Long id) {
-        return personnelRepository.findById(id).orElseThrow();
+        return personnelRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No Category with this ID: " + id));
     }
 
     @Override
@@ -29,7 +31,9 @@ public class PersonnelService implements IPersonnelService {
 
     @Override
     public Personnel update(Long id, Personnel personnel) {
-        return personnelRepository.save(personnel);
+        var personnelToUpdate = personnelRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No Category with this ID: " + id));
+        return personnelRepository.save(personnelToUpdate);
     }
 
     @Override

@@ -27,12 +27,9 @@ public class TypeService implements ITypeService {
 
     @Override
     public TypeResponse getById(Long id) {
-        Optional<Type> result = typeRepository.findById(id);
-        if (result.isPresent()) {
-            return TypeResponse.mapToTypeResponse(result.get());
-        } else {
-            return TypeResponse.mapToTypeResponse(result.orElseThrow());
-        }
+        var type = typeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No Category with this ID: " + id));
+        return TypeResponse.mapToTypeResponse(type);
     }
 
     @Override
@@ -43,7 +40,11 @@ public class TypeService implements ITypeService {
     }
 
     @Override
-    public TypeResponse update(Long id, Type type) {
+    public TypeResponse update(Long id, TypeRequest request) {
+        var type = typeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No Category with this ID: " + id));
+        type.setDescription(request.getDescription());
+        type.setName(request.getName());
         return TypeResponse.mapToTypeResponse(typeRepository.save(type));
     }
 

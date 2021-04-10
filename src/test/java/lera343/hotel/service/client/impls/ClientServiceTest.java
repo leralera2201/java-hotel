@@ -90,7 +90,7 @@ class ClientServiceTest {
         var captor = ArgumentCaptor.forClass(Client.class);
         var client = ClientStub.getRandomClient();
         when(clientRepository.save(Mockito.any())).thenReturn(ClientStub.getRandomClient());
-        var result = service.update(ClientStub.ID, ClientStub.getRandomClient());
+        var result = service.update(ClientStub.ID, ClientStub.getClientRequest());
         Mockito.verify(clientRepository, atLeast(1)).save(captor.capture());
         assertEquals(client, captor.getValue());
         assertEquals(client.getName(), result.getName());
