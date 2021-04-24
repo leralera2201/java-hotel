@@ -7,9 +7,11 @@ import lera343.hotel.service.security.SecurityService;
 import lera343.hotel.service.user.UserDetailsServiceImp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.PostConstruct;
@@ -30,14 +32,21 @@ public class SecurityController {
 //        adminRequest.setPassword("admin");
 //        service.createUser(adminRequest, Role.ERole.ROLE_ADMIN);
 //    }
+//
 
     @PostMapping("/createUser")
-    public ResponseEntity<User> registerUser(UserRequest userDto) {
-        return ResponseEntity.ok(service.createUser(userDto, Role.ERole.ROLE_USER));
+    @PreAuthorize("isAnonymous()")
+    public ResponseEntity<User> registerUser(@RequestBody UserRequest userDto){
+        return  ResponseEntity.ok(service.createUser(userDto, Role.ERole.ROLE_USER));
+    }
+    @PostMapping("/createAdmin")
+    public ResponseEntity<User> registerAdmin(@RequestBody UserRequest userDto){
+        return  ResponseEntity.ok(service.createUser(userDto, Role.ERole.ROLE_ADMIN));
+    }
+    @PostMapping("/login")
+    @PreAuthorize("isAnonymous()")
+    public ResponseEntity<String> login(@RequestBody UserRequest userRequest){
+        return ResponseEntity.ok(service.createToken(userRequest));
     }
 
-    @PostMapping("/createAdmin")
-    public ResponseEntity<User> registerAdmin(UserRequest userDto) {
-        return ResponseEntity.ok(service.createUser(userDto, Role.ERole.ROLE_ADMIN));
-    }
 }
